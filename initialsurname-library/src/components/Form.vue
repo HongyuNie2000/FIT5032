@@ -44,11 +44,18 @@
             </div>
             <div class="col-md-6">
               <label for="gender" class="form-label">gender</label>
-              <select class="form-select" id="gender" v-model="formData.gender">
+              <select
+                class="form-select"
+                id="gender"
+                @blur="() => validateGender(true)"
+                @input="() => validateGender(false)"
+                v-model="formData.gender"
+              >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="other">other</option>
               </select>
+              <div v-if="errors.gender" class="text-danger">{{ errors.gender }}</div>
             </div>
           </div>
           <div class="mb-3">
@@ -57,15 +64,20 @@
               class="form-control"
               id="reason"
               rows="3"
+              @blur="() => validateReason(true)"
+              @input="() => validateReason(false)"
               v-model="formData.reason"
             ></textarea>
           </div>
+          <div v-if="errors.reason" class="text-danger">{{ errors.reason }}</div>
           <div class="text-center">
             <button type="submit" class="btn btn-primary me-2">Submit</button>
             <button type="button" class="btn btn-secondary" @click="clearForm">Clear</button>
           </div>
         </form>
+
         <div class="row mt-5" v-if="submittedCards.length">
+          <!--
           <div class="d-flex flex-wrap justify-content-start">
             <div
               v-for="(card, index) in submittedCards"
@@ -85,6 +97,14 @@
               </ul>
             </div>
           </div>
+        -->
+          <DataTable :value="submittedCards" tableStyle="min-width: rem">
+            <Column field="username" header="Username"></Column>
+            <Column field="password" header="Password"></Column>
+            <Column field="isAustralian" header="IsAustralian"></Column>
+            <Column field="Gender" header="Gender"></Column>
+            <Column field="reason" header="Reason"></Column>
+          </DataTable>
         </div>
       </div>
     </div>
@@ -92,6 +112,8 @@
 </template>
 
 <script setup>
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
 import { ref } from 'vue'
 
 const formData = ref({
@@ -106,7 +128,15 @@ const submittedCards = ref([])
 
 const submitForm = () => {
   validateName(true)
-  if (!errors.value.username) {
+  validatePassword(true)
+  validateGender(true)
+  validateReason(true)
+  if (
+    !errors.value.username &&
+    !errors.value.password &&
+    !errors.value.gender &&
+    !errors.value.reason
+  ) {
     submittedCards.value.push({
       ...formData.value
     })
@@ -146,8 +176,32 @@ const validatePassword = (blur) => {
   const hasNumber = /\d/.test(password)
   const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password)
   if (password.length < minLength) {
-    if (blur) errors.value.password = 'Password must be at least ${minLength} characters long'
+    if (blur) errors.value.password = `Password must be at least ${minLength} characters long`
+  } else if (!hasUppercase) {
+    if (blur) errors.value.password = `Password must contain at least one uppercase letter`
+  } else if (!hasLowercase) {
+    if (blur) errors.value.password = `Password must contain at least one lowwer letter`
+  } else if (!hasNumber) {
+    if (blur) errors.value.password = `Password must contain at least one lnumber`
+  } else if (!hasSpecialChar) {
+    if (blur) errors.value.password = `Password must contain at least one special character`
+  } else {
+    errors.value.password = null
   }
+}
+
+const validateGender = (blur) => {
+  if (formData.value.gender == '') {
+    if (blur) errors.value.gender = 'Gender must be not empty'
+  } else errors.value.gender = null
+}
+
+const validateReason = (blur) => {
+  if (formData.value.reason == '') {
+    if (blur) errors.value.reason = 'Reason must be not empty'
+  } else if (formData.value.reason.length < 10) {
+    if (blur) errors.value.reason = 'Reason must be great than 10 character'
+  } else errors.value.reason = null
 }
 </script>
 
