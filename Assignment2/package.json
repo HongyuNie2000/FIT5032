@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
+    "firebase": "^10.13.0",
+    "primevue": "^4.0.5",
     "require": "^2.4.20",
     "vue": "^3.4.29",
     "vue-router": "^4.4.3"
