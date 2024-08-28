@@ -17,31 +17,7 @@
               />
               <div v-if="errors.username" class="text-danger">{{ errors.username }}</div>
             </div>
-            <div class="col-md-6">
-              <label for="password" class="form-label">Password</label>
-              <input
-                type="text"
-                class="form-control"
-                id="password"
-                @blur="() => validatePassword(true)"
-                @input="() => validatePassword(false)"
-                v-model="formData.password"
-              />
-              <div v-if="errors.password" class="text-danger">{{ errors.password }}</div>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <div class="form-check">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  id="isAustralian"
-                  v-model="formData.isAustralian"
-                />
-                <label class="form-check-label" for="isAustralian">isAustralian Resident?</label>
-              </div>
-            </div>
+
             <div class="col-md-6">
               <label for="gender" class="form-label">gender</label>
               <select
@@ -57,6 +33,44 @@
               </select>
               <div v-if="errors.gender" class="text-danger">{{ errors.gender }}</div>
             </div>
+            <div class="col-md-6">
+              <label for="password" class="form-label">Password</label>
+              <input
+                type="text"
+                class="form-control"
+                id="password"
+                @blur="() => validatePassword(true)"
+                @input="() => validatePassword(false)"
+                v-model="formData.password"
+              />
+              <div v-if="errors.password" class="text-danger">{{ errors.password }}</div>
+            </div>
+            <div class="col-md-6">
+              <label for="Confirm password" class="form-label">Confirm Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="confirm-password"
+                @blur="() => validateConfirmPassword(true)"
+                v-model="formData.confirmPassword"
+              />
+              <div v-if="errors.confirmPassword" class="text-danger">
+                {{ errors.confirmPassword }}
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="isAustralian"
+                  v-model="formData.isAustralian"
+                />
+                <label class="form-check-label" for="isAustralian">isAustralian Resident?</label>
+              </div>
+            </div>
           </div>
           <div class="mb-3">
             <label for="reason" class="form-label">Reason for joining</label>
@@ -68,8 +82,15 @@
               @input="() => validateReason(false)"
               v-model="formData.reason"
             ></textarea>
+            <div v-if="errors.reason" class="text-danger">{{ errors.reason }}</div>
+            <div v-else-if="formData.reason.includes('friend')" style="color: green">
+              Great to have a friend
+            </div>
           </div>
-          <div v-if="errors.reason" class="text-danger">{{ errors.reason }}</div>
+          <div class="mb-3">
+            <label for="reason" class="form-label">Suburb</label>
+            <input type="text" class="form-control" id="suburb" v-bind:value="formData.suburb" />
+          </div>
           <div class="text-center">
             <button type="submit" class="btn btn-primary me-2">Submit</button>
             <button type="button" class="btn btn-secondary" @click="clearForm">Clear</button>
@@ -116,12 +137,22 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { ref } from 'vue'
 
+const validateConfirmPassword = (blur) => {
+  if (formData.value.password !== formData.value.confirmPassword) {
+    if (blur) errors.value.confirmPassword = 'Passwords do not match.'
+  } else {
+    errors.value.confirmPassword = null
+  }
+}
+
 const formData = ref({
   username: '',
   password: '',
+  confirmPassword: '',
   isAustralian: false,
   reason: '',
-  gender: ''
+  gender: '',
+  suburb: 'Clayton'
 })
 
 const submittedCards = ref([])
@@ -147,6 +178,7 @@ const submitForm = () => {
 function clearForm() {
   formData.value.username = ''
   formData.value.password = ''
+  formData.value.confirmPassword = ''
   formData.value.isAustralian = false
   formData.value.reason = ''
   formData.value.gender = ''
@@ -155,6 +187,7 @@ function clearForm() {
 const errors = ref({
   username: null,
   password: null,
+  confirmPassword: null,
   resident: null,
   gender: null,
   reason: null
