@@ -6,16 +6,16 @@
         <form @submit.prevent="submitForm">
           <div class="row mb-3">
             <div class="col-md-6">
-              <label for="username" class="form-label">Username</label>
+              <label for="username" class="form-label">Email</label>
               <input
                 type="text"
                 class="form-control"
                 id="username"
-                @blur="() => validateName(true)"
-                @input="() => validateName(false)"
-                v-model="formData.username"
+                @blur="() => validateEmail(true)"
+                @input="() => validateEmail(false)"
+                v-model="formData.email"
               />
-              <div v-if="errors.username" class="text-danger">{{ errors.username }}</div>
+              <div v-if="errors.username" class="text-danger">{{ errors.email }}</div>
             </div>
 
             <div class="col-md-6">
@@ -119,8 +119,9 @@
               </div>
             </div>
           -->
+          <div>{{ users }}</div>
           <DataTable :value="submittedCards" tableStyle="min-width: rem">
-            <Column field="username" header="Username"></Column>
+            <Column field="email" header="email"></Column>
             <Column field="password" header="Password"></Column>
             <Column field="isAustralian" header="IsAustralian"></Column>
             <Column field="Gender" header="Gender"></Column>
@@ -137,6 +138,18 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { ref } from 'vue'
 
+var users = []
+
+function addUser(userData) {
+  var user = {}
+  user['email'] = userData.email
+  user['password'] = userData.password
+  user['isAustralian'] = userData.isAustralian
+  user['reason'] = userData.reason
+  user['suburb'] = userData.suburb
+  users.push({ user })
+}
+
 const validateConfirmPassword = (blur) => {
   if (formData.value.password !== formData.value.confirmPassword) {
     if (blur) errors.value.confirmPassword = 'Passwords do not match.'
@@ -146,7 +159,7 @@ const validateConfirmPassword = (blur) => {
 }
 
 const formData = ref({
-  username: '',
+  email: '',
   password: '',
   confirmPassword: '',
   isAustralian: false,
@@ -158,25 +171,28 @@ const formData = ref({
 const submittedCards = ref([])
 
 const submitForm = () => {
-  validateName(true)
+  validateEmail(true)
   validatePassword(true)
   validateGender(true)
   validateReason(true)
+  validateConfirmPassword(true)
   if (
-    !errors.value.username &&
+    !errors.value.email &&
     !errors.value.password &&
     !errors.value.gender &&
-    !errors.value.reason
+    !errors.value.reason &&
+    !errors.value.confirmPassword
   ) {
     submittedCards.value.push({
       ...formData.value
     })
+    addUser(formData.value)
     clearForm()
   }
 }
 
 function clearForm() {
-  formData.value.username = ''
+  formData.value.email = ''
   formData.value.password = ''
   formData.value.confirmPassword = ''
   formData.value.isAustralian = false
@@ -185,7 +201,7 @@ function clearForm() {
 }
 
 const errors = ref({
-  username: null,
+  email: null,
   password: null,
   confirmPassword: null,
   resident: null,
@@ -193,11 +209,15 @@ const errors = ref({
   reason: null
 })
 
-const validateName = (blur) => {
-  if (formData.value.username.length < 3) {
-    if (blur) errors.value.username = 'Name must be at least 3 characters'
+const validateEmail = (blur) => {
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+  if (formData.value.email.length == 0) {
+    if (blur) errors.value.username = 'Email can not be empty'
   } else {
-    errors.value.username = null
+    if (blur) {
+      if (!emailPattern.test(formData.value.email))
+        errors.value.email = 'Email fomat is noat correct'
+    } else errors.value.email = null
   }
 }
 
