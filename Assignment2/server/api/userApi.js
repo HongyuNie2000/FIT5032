@@ -29,7 +29,7 @@ router.post("/login", (req, res) => {
     });
   });
   
-  // 注册接口
+  // register
   router.post("/add", (req, res) => {
     const params = req.body;
     console.log(params)
@@ -44,7 +44,7 @@ router.post("/login", (req, res) => {
         // or send 500 status code
       }
       if (results.length != 0 && params.email == results[0].email) {
-        res.send("-1"); // -1 表示用户名已经存在
+        res.send("-1"); // -1 indicate user has existed
       } else {
         const isAustralian = params.isAustralian
         conn.query(
@@ -55,7 +55,7 @@ router.post("/login", (req, res) => {
               console.log(err);
             } else {
               console.log(rst);
-              res.send("0"); // 0 表示用户创建成功
+              res.send("0"); // 0 indicates register completed
             }
           },
         );

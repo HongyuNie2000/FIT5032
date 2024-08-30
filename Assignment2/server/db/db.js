@@ -1,3 +1,5 @@
+
+//the configuration of database
 module.exports = {
     mysql: {
         host: 'localhost',
