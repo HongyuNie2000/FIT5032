@@ -20,17 +20,13 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        cd initialsurname-library || exit 0
-        if [ -f Gemfile ]; then
-          bundle install
-        fi
+        cd initialsurname-library
+        bundle install
 
     - name: Build Jekyll Site
       run: |
-        cd initialsurname-library || exit 0
-        if [ -f Gemfile ]; then
-          bundle exec jekyll build
-        fi
+        cd initialsurname-library
+        bundle exec jekyll build
 
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4
