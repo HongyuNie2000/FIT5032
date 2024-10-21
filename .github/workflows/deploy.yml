@@ -9,20 +9,18 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Change Directory to Library
+    - name: Change Directory to Subfolder
       run: cd initialsurname-library
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20'
     - name: Install dependencies
-      run: |
-        cd initialsurname-library
-        npm ci
+      working-directory: initialsurname-library
+      run: npm ci
     - name: Build
-      run: |
-        cd initialsurname-library
-        npm run build
+      working-directory: initialsurname-library
+      run: npm run build
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@4.1.4
       with:
