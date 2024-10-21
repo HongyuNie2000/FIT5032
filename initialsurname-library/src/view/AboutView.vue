@@ -1,9 +1,12 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { store } from '@/store/store'
+import { getAuth, signOut } from 'firebase/auth'
 
 // Activity 1: Import JSON files (authors.json and bookstores.json)
 import authors from '@/assets/json/authors.json'
 import bookstores from '@/assets/json/bookstores.json'
+import router from '@/router/Index'
 
 const showMessage = ref(false)
 
@@ -69,11 +72,39 @@ const topSellers = computed(() => {
 const toggleMessage = () => {
   showMessage.value = !showMessage.value
 }
+
+const auth = getAuth()
+const user = ref(auth.currentUser)
+const logout = () => {
+  console.log(user.value)
+  signOut(auth)
+    .then(() => {
+      console.log(user.value)
+      user.value = null // Clear the user after logging out
+      //store.commit('logout')
+    })
+    .catch((error) => {
+      console.error('Error logging out:', error)
+    })
+}
 </script>
 
 <!-- JSONLab.vue -->
 <template>
-  <div class="json-lab">
+  <div>
+    <button
+      @click="
+        () => {
+          logout()
+
+          //router.push('/signin')
+        }
+      "
+    >
+      log out
+    </button>
+  </div>
+  <div class="json-lab" v-if="store.state.isLoggedIn">
     <h1>🗄️ W2. JSON Data & Vue Directives Lab</h1>
 
     <section class="lab-section">
