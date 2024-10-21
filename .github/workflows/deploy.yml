@@ -9,7 +9,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -28,6 +28,5 @@ jobs:
       with:
         branch: gh-pages
         folder: initialsurname-library/dist
-
 permissions:
   contents: write
