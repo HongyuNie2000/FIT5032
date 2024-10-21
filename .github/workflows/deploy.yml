@@ -1,36 +1,38 @@
-name: Deploy to GitHub Pages
+name: Deploy Jekyll Site to GitHub Pages
+
 on:
   push:
     branches:
       - main
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+    - name: Checkout Repository
+      uses: actions/checkout@v2
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
       with:
-        node-version: '20'
+        ruby-version: 2.7
+        bundler-cache: true
 
-    - name: Install dependencies
-      working-directory: initialsurname-library
-      run: npm ci
-      
-    - name: Build
-      working-directory: initialsurname-library
-      run: npm run build
-    
-    - name: Move Build to Root
-      run: mv initialsurname-library/dist/* .
-    
+    - name: Install Dependencies
+      run: |
+        cd initialsurname-library
+        bundle install
 
-    - name: Deploy
-      uses: JamesIves/github-pages-deploy-action@4.1.4
+    - name: Build Jekyll Site
+      run: |
+        cd initialsurname-library
+        bundle exec jekyll build
+
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4
       with:
         branch: gh-pages
-        folder: initialsurname-library/dist
+        folder: initialsurname-library/_site
+
 permissions:
   contents: write
