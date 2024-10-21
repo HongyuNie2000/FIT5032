@@ -9,6 +9,7 @@ import BookList from '@/components/BookList.vue'
 import GetBookCountView from '@/view/GetBookCountView.vue'
 import WeatherView from '@/view/WeatherView.vue'
 import CountBookAPI from '@/view/CountBookAPI.vue'
+import { publicPath } from '../../vue.config'
 const routes = [
   { path: '/', name: 'Home', component: HomeView },
   { path: '/about', name: 'About', component: AboutView },
@@ -25,7 +26,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(publicPath),
   routes
 })
 
